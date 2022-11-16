@@ -16,7 +16,11 @@ class LoginForm extends AsyncForm {
         document.getElementById('login-form').reset()
         App.modals.login.close();
       } else {
-        alert(response.error);
+        if (response.error) {
+          alert(response.error) //Для пользователя
+        } else {
+          throw new Error(err);
+        }
       }
     })
   }

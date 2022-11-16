@@ -14,7 +14,11 @@ class CreateAccountForm extends AsyncForm {
         App.update();
         App.modals.createAccount.close();
       } else {
-        alert(response.error);
+        if (response.error) { 
+          alert(response.error) //Для пользователя
+        } else {
+          throw new Error(err);  
+        }
       }
       App.getForm('createAccount').element.reset();
     }

@@ -17,7 +17,7 @@ class AsyncForm {
       this.element = element;
       this.registerEvents();
     } else {
-      console.error('В AsyncForm передан пустой элемент')
+      throw new Error('В AsyncForm передан пустой элемент')
     }
   }
 
@@ -41,7 +41,6 @@ class AsyncForm {
    * */
   getData() {
     let data = new FormData(this.element);
-    console.log(data.getAll('sum'));
     return data;
   }
   onSubmit(options) {

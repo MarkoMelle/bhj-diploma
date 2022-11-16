@@ -10,11 +10,10 @@ const FileSync = require('lowdb/adapters/FileSync', {
   });
 
 //запрос списка транзакций
-router.post("/", upload.none(), function(request, response) {
+router.get("/", upload.none(), function(request, response) {
     const db = low(new FileSync('db.json'));// получение БД
-    let { id } = request.body; 
     //получение значения списка транзакций, для указанного счёта
-    let transactions = db.get("transactions").filter({account_id: id}).value();
+    let transactions = db.get("transactions").filter({account_id: request.query.account_id}).value();
     //отправка ответа со списком транзакций
     response.json({ success: true, data: transactions });
 });

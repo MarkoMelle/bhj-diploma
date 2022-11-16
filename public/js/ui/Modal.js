@@ -16,7 +16,7 @@ class Modal {
       this.element = element;
       this.registerEvents()
     } else {
-      console.error('В modal передан пустой элемент')
+      throw new Error('В modal передан пустой элемент')
     }
   }
 

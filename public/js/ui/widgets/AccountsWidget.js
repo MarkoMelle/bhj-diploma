@@ -18,7 +18,7 @@ class AccountsWidget {
       this.registerEvents();
       this.update();
     } else {
-      console.error('В AccountsWidget передан пустой элемент');
+      throw new Error('В AccountsWidget передан пустой элемент');
     }
   }
 
@@ -64,7 +64,7 @@ class AccountsWidget {
    * */
   update() {
     if (User.current()) {
-      Account.list(User.current(), (err, response) => {
+      Account.list(User.current().id, (err, response) => {
         if (response.success) {
           this.clear();
           this.renderItem(response.data);
@@ -98,7 +98,7 @@ class AccountsWidget {
     if (activeAcc) { activeAcc.classList.remove('active') };
     element.classList.add('active');
     this.active = +element.dataset.id
-    App.showPage('transactions', { account_id: element.dataset.id});
+    App.showPage('transactions', { account_id: element.dataset.id });
   }
 
   /**
@@ -107,18 +107,17 @@ class AccountsWidget {
    * item - объект с данными о счёте
    * */
   getAccountHTML(item) {
-    if (item.name) {
-      const li = document.createElement('li');
-      li.dataset.id = item.id;
-      li.classList.add('account');
-      li.innerHTML = ` <a href="#">
+    if (!item.name) {
+      return '';
+    }
+    const li = document.createElement('li');
+    li.dataset.id = item.id;
+    li.classList.add('account');
+    li.innerHTML = ` <a href="#">
       <span>${item.name}</span> 
       <span> / ${item.sum} ₽</span>
       </a>`;
-      return li;
-    } else {
-      return '';
-    }
+    return li;
   }
 
   /**
@@ -132,7 +131,7 @@ class AccountsWidget {
       const accPanel = document.querySelector('.accounts-panel');
       accPanel.append(this.getAccountHTML(item));
     })
-    if(this.active) {
+    if (this.active) {
       document.querySelector(`[data-id="${this.active}"]`).classList.add('active')
     }
   }

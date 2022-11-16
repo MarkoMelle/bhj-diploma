@@ -35,14 +35,14 @@ class TransactionsPage {
    * TransactionsPage.removeAccount соответственно
    * */
   registerEvents() {
-    this.element.addEventListener('click', (e) => {
-      if (e.target.closest('button').classList.contains('remove-account')) {
-        this.removeAccount();
-      }
-
-      if (e.target.closest('.transaction__remove') && e.target.closest('.transaction__remove').classList.contains('transaction__remove')) {
-        this.removeTransaction(e.target.closest('.transaction__remove').dataset.id);
-      }
+    document.querySelector('.remove-account').addEventListener('click', (e) => {
+      this.removeAccount();
+    })
+    let remTranBtns = Array.from(document.querySelectorAll('.transaction__remove'));
+    remTranBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        this.removeTransaction(e.target.dataset.id)
+      })
     })
   }
 
@@ -76,7 +76,7 @@ class TransactionsPage {
    * По удалению транзакции вызовите метод App.update(),
    * либо обновляйте текущую страницу (метод update) и виджет со счетами
    * */
-  removeTransaction(id) { 
+  removeTransaction(id) {
     if (confirm('Вы действительно хотите удалить эту транзакцию?')) {
       Transaction.remove({ 'id': id }, (err, response) => {
         if (response.success) {
@@ -99,15 +99,23 @@ class TransactionsPage {
         if (response.success) {
           this.renderTitle(response.data.name);
         } else {
-          console.log(err);
+          if (response.error) {
+            alert(response.error) //Для пользователя
+          } else {
+            throw new Error(err);
+          }
         }
       })
 
-      Transaction.list({ 'id': options.account_id }, (err, response) => {
+      Transaction.list(`account_id=${options.account_id}`, (err, response) => {
         if (response && response.success) {
           this.renderTransactions(response.data);
         } else {
-          console.log(err);
+          if (response.error) {
+            alert(response.error) //Для пользователя
+          } else {
+            throw new Error(err);
+          }
         }
       })
     }
@@ -175,10 +183,13 @@ class TransactionsPage {
    * используя getTransactionHTML
    * */
   renderTransactions(data) {
+    console.log(data)
     const content = this.element.querySelector('.content')
-    content.innerHTML = '';
+    let tranList = '';
     data.forEach(item => {
-      content.append(this.getTransactionHTML(item));
+      tranList += this.getTransactionHTML(item).outerHTML;
     })
+    content.innerHTML = tranList;
+    this.registerEvents();
   }
 }
